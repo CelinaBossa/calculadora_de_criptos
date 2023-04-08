@@ -3,26 +3,46 @@ import requests
 import json
 
 cripto = ['bitcoin','ethereum']
-moneda = ['peso','euro','dolar']
+moneda = ['euro','dolar']
+cotizacion_moneda = []
 
 # Carga la biblioteca compartida
 mylib = ctypes.CDLL('./multiplication.so') 
-mylib.multiply.restype = ctypes.c_float
-mylib.multiply.argtypes = (ctypes.c_float,ctypes.c_float)
+mylib.multiply.restype = ctypes.c_float #defino retorno
+mylib.multiply.argtypes = (ctypes.c_float,ctypes.c_float) #defino parametros de llamada
 
 # Genera peticion HTTL
-url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum&vs_currencies=usd'
+url_cripto = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum&vs_currencies=ars'
+url_moneda_b = 'https://www.dolarsi.com/api/api.php?type='
 
-respuesta = requests.get(url)
+#Obtención de cotizacion de dolar y euro
+for j in range(len(moneda)):
+    url_moneda = url_moneda_b+moneda[j] #completo el URL
+    datos = requests.get(url_moneda)
+    datos_json = json.loads(datos.text)
+    valor = datos_json[2] # 2 porque en ambos URL el label 2 tiene cotizacion
+    cotizacion = (valor.get('casa')).get('venta') #el label 'venta' esta dentro de 'casa
+    cotizacion = cotizacion.replace(',','.') #remplazo ',' por '.' para convertir en float
+    cotizacion_moneda.append(float(cotizacion))
 
+#Obtencion de cotizacion de criptos
+respuesta = requests.get(url_cripto)
 objeto_json = json.loads(respuesta.text)
 
-for i in range(len(cripto)):
-    valor_reportado = objeto_json[cripto[i]]
-    value = valor_reportado.get('usd')
-    # Utiliza el valor reportado en tu código
-    print('El valor reportado es:', value)
+for k in range(len(moneda)):
+    print("Moneda:"+moneda[k])
+    print(" ")
+    for i in range(len(cripto)):
+        print("Cripto:"+cripto[i])
+        valor_reportado = objeto_json[cripto[i]]
+        value = valor_reportado.get('ars')
+        # Utiliza el valor reportado en tu código
+        print('El valor reportado es:', value)
 
-    # Llama a la función 'add_numbers' y muestra el resultado
-    result = mylib.multiply(ctypes.c_float(value), 2)
-    print(result) 
+        # Llama a la función 'add_numbers' y muestra el resultado
+        resultado = mylib.multiply(ctypes.c_float(value),ctypes.c_float(cotizacion_moneda[k]))
+        #   multiply (cotizacion cripto, cotizacion euro, cotizacion dolar) todo referenciado a ars
+        print(resultado)
+        print("------------------ ")
+    print("***************************")
+    print(" ")

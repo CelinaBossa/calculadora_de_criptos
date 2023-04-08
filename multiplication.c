@@ -1,3 +1,4 @@
-float multiply(float x, int y) {
-    return x * y;
+float multiply(float x,float y) {
+    float a = x/y;
+    return a;
 }
