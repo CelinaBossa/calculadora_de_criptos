@@ -7,6 +7,7 @@
 
 void usage(char* argv0);
 
+extern double multiply(double a, double b); // Declare the assembly routine
 
 int main(int argc, char** argv)
 {
@@ -57,6 +58,13 @@ int main(int argc, char** argv)
         close(pipefd[0]);
 
         printf("%s", buffer);
+
+        double crypto_usd = strtod(buffer, NULL);
+        double usd = 215.09;
+
+        double result = multiply(crypto_usd, usd); // Call the assembly routine
+
+        printf("%f\n", result);
 
     }
 }

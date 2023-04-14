@@ -22,4 +22,5 @@ j = 0
 url = key+currencies[0]
 data = requests.get(url)
 data = data.json()
-print(data)
+value = data.get('price')
+print(value)
