@@ -4,15 +4,28 @@
 #include <curl/curl.h>
 
 extern double multiply(double a, double b);
-
+void usage();
 void function_pt(void *ptr, size_t size, size_t nmemb, void *stream);
+char crypto1[32], crypto2[32];
+double dolarhoy = 0.0;
 
-int main(void)
+int main(int argc, char *argv[])
 {
+  strcpy(crypto1,argv[1]);
+  strcpy(crypto2,argv[2]);
+  dolarhoy = atof(argv[3]);
+
+
+  if (argc != 4)
+   usage();
+
+  char buffer[100];
+  snprintf(buffer, sizeof(buffer), "https://api.binance.com/api/v3/ticker/price?symbol=%s%s", argv[1], argv[2]);
+
   CURL *curl;
   curl = curl_easy_init();
-  if(curl) {
-    curl_easy_setopt(curl, CURLOPT_URL, "https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT");
+  if (curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, buffer);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, function_pt);
     curl_easy_perform(curl);
     curl_easy_cleanup(curl);
@@ -22,7 +35,8 @@ int main(void)
 
 
 void function_pt(void *ptr, size_t size, size_t nmemb, void *stream)
-{
+{   
+
     printf("%s\n", ptr);
     char* chrptr = strchr(ptr, 'e');
     if (chrptr != NULL) {
@@ -31,9 +45,14 @@ void function_pt(void *ptr, size_t size, size_t nmemb, void *stream)
     else
         exit(EXIT_FAILURE);
     double us_value = strtod(chrptr, NULL);
-    printf("BTCUSDT: %lf\n", us_value);
+    printf("%s %s: %lf\n", crypto1, crypto2, us_value);
 
-    double ars_value = multiply(us_value, 213.10);
-    printf("BTCARS: %lf\n", ars_value);
+    double ars_value = multiply(us_value, dolarhoy);
+    printf("%s ARS: %lf\n", crypto1, ars_value);
+}
+void usage()
+{
+  fprintf(stderr, "usage: main cripto1 cripto2 cotizacion del dolar\n");
+  exit(EXIT_FAILURE);
 }
 
