@@ -7,9 +7,9 @@ moneda = ['euro','dolar']
 cotizacion_moneda = []
 
 # Carga la biblioteca compartida
-mylib = ctypes.CDLL('./multiplication.so') 
-mylib.multiply.restype = ctypes.c_float #defino retorno
-mylib.multiply.argtypes = (ctypes.c_float,ctypes.c_float) #defino parametros de llamada
+mylib = ctypes.CDLL('./main.so') 
+mylib.multiply.restype = ctypes.c_double #defino retorno
+mylib.multiply.argtypes = (ctypes.c_double, ctypes.c_double) #defino parametros de llamada
 
 # Genera peticion HTTL
 url_cripto = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum&vs_currencies=ars'
@@ -22,8 +22,8 @@ for j in range(len(moneda)):
     datos_json = json.loads(datos.text)
     valor = datos_json[2] # 2 porque en ambos URL el label 2 tiene cotizacion
     cotizacion = (valor.get('casa')).get('venta') #el label 'venta' esta dentro de 'casa
-    cotizacion = cotizacion.replace(',','.') #remplazo ',' por '.' para convertir en float
-    cotizacion_moneda.append(float(cotizacion))
+    cotizacion = cotizacion.replace(',','.') #remplazo ',' por '.' para convertir en double
+    cotizacion_moneda.append(1/double(cotizacion))
 
 #Obtencion de cotizacion de criptos
 respuesta = requests.get(url_cripto)
@@ -39,8 +39,9 @@ for k in range(len(moneda)):
         # Utiliza el valor reportado en tu código
         print('El valor reportado es:', value)
 
-        # Llama a la función 'add_numbers' y muestra el resultado
-        resultado = mylib.multiply(ctypes.c_float(value),ctypes.c_float(cotizacion_moneda[k]))
+        # Llama a la función 'multiply' y muestra el resultado
+        resultado = mylib.multiply(ctypes.c_double(value),ctypes.c_double(cotizacion_moneda[k]))
+
         #   multiply (cotizacion cripto, cotizacion euro, cotizacion dolar) todo referenciado a ars
         print(resultado)
         print("------------------ ")
