@@ -1,9 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-extern double multiply(double a, double b);  // Assembly routine
+extern double multiply(double a, double b); 
 
 float multiplication(float x,float y){
-    double result = multiply(x,y); // Call the assembly routine
+    double result = multiply(x,y); // Llama a la funcion de assembler
     return result;
 }
+
+

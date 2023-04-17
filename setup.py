@@ -11,7 +11,7 @@ mylib = ctypes.CDLL('./multiplication.so')
 mylib.multiply.restype = ctypes.c_float #defino retorno
 mylib.multiply.argtypes = (ctypes.c_float, ctypes.c_float) #defino parametros de llamada
 
-# Genera peticion HTTL
+# Genera peticion HTTP
 url_cripto = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cethereum&vs_currencies=ars'
 url_moneda_b = 'https://www.dolarsi.com/api/api.php?type='
 
@@ -38,11 +38,10 @@ for k in range(len(moneda)):
         value = valor_reportado.get('ars')
         # Utiliza el valor reportado en tu código
         #print('El valor reportado es:', value)
-
         # Llama a la función 'multiply' y muestra el resultado
         resultado = mylib.multiply(ctypes.c_float(value),ctypes.c_float(cotizacion_moneda[k]))
 
-        #   multiply (cotizacion cripto, cotizacion euro, cotizacion dolar) todo referenciado a ars
+        #   multiply (cotizacion cripto, cotizacion moneda) todo referenciado a ars
         print(resultado)
         print("------------------ ")
     print("***************************")
