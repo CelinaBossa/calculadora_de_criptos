@@ -1,4 +1,9 @@
-float multiply(float x,float y) {
-    float a = x*y;
-    return a;
+#include <stdio.h>
+#include <stdlib.h>
+
+extern double multiply(double a, double b);  // Assembly routine
+
+float multiplication(float x,float y){
+    double result = multiply(x,y); // Call the assembly routine
+    return result;
 }

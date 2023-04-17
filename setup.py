@@ -7,7 +7,7 @@ moneda = ['euro','dolar']
 cotizacion_moneda = []
 
 # Carga la biblioteca compartida
-mylib = ctypes.CDLL('./main.so') 
+mylib = ctypes.CDLL('./multiplication.so') 
 mylib.multiply.restype = ctypes.c_float #defino retorno
 mylib.multiply.argtypes = (ctypes.c_float, ctypes.c_float) #defino parametros de llamada
 
@@ -37,7 +37,7 @@ for k in range(len(moneda)):
         valor_reportado = objeto_json[cripto[i]]
         value = valor_reportado.get('ars')
         # Utiliza el valor reportado en tu código
-        print('El valor reportado es:', value)
+        #print('El valor reportado es:', value)
 
         # Llama a la función 'multiply' y muestra el resultado
         resultado = mylib.multiply(ctypes.c_float(value),ctypes.c_float(cotizacion_moneda[k]))
