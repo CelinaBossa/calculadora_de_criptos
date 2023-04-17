@@ -5,13 +5,16 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-void usage(char* argv0);
+void usage(char* argv0);                     // Help msg
+extern double multiply(double a, double b);  // Assembly routine
 
-extern double multiply(double a, double b); // Declare the assembly routine
-
+/**
+ * @brief routine to get cryptocurrency value in ARS.
+*/
 int main(int argc, char** argv)
 {
-    if (argc != 2)
+
+    if (argc != 5 || !(!strcmp(argv[3], "USDT") || !strcmp(argv[3], "EUR")))
         usage(argv[0]);
     
     int pipefd[2];
@@ -35,7 +38,7 @@ int main(int argc, char** argv)
         close(pipefd[0]);
         close(pipefd[1]);
 
-        const char* args[3] = {"/usr/bin/python", argv[1], (char*)NULL};
+        const char* args[5] = {"/usr/bin/python", argv[1] ,argv[2], argv[3],(char*)NULL};
 
         if (execv(args[0], (char**)args) < 0) {
             char buffer[13] = "execv error\n";
@@ -57,21 +60,28 @@ int main(int argc, char** argv)
         
         close(pipefd[0]);
 
-        printf("%s", buffer);
+        printf("%s %s: %s", argv[2], argv[3], buffer);
 
         double crypto_usd = strtod(buffer, NULL);
-        double usd = 215.09;
+        double currency_ars = strtod(argv[4], NULL);
 
-        double result = multiply(crypto_usd, usd); // Call the assembly routine
+        double result = multiply(crypto_usd, currency_ars); // Call the assembly routine
 
-        printf("%f\n", result);
+        printf("%s ARS: %f\n", argv[2], result);
 
     }
 }
 
-
+/**
+ * @brief Help msg.
+ * @param argv0 Name of the programm.
+*/
 void usage(char* argv0)
 {
-    fprintf(stderr, "Usage: %s <string>\n", argv0);
+    fprintf(stderr, "Usage: %s currencies.py crypto currency currency_to_ARS\n", argv0);
+    fprintf(stderr, "    currency.py:     python script for Binance API calling\n");
+    fprintf(stderr, "    crypto:          cryptocurrency to convert\n");
+    fprintf(stderr, "    currency:        currency of conversion\n");
+    fprintf(stderr, "    currency_to_ARS: value of currency in ARS\n");
     exit(EXIT_FAILURE);
 }
